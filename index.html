@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Обзор: Мессенджер Макс</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<style>
+/* === СТИЛЬ (CYBERPUNK RED) === */
+:root { 
+    --primary:#ff0033; 
+    --primary-rgb:255,0,51; 
+    --bg:#0a0a0a; 
+    --card:#111; 
+    --border:rgba(255,255,255,0.08); 
+    --glow:rgba(255,0,51,0.15); 
+    --glow-strong:rgba(255,0,51,0.8); 
+    --shadow:rgba(255,0,51,0.2); 
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:#fff;font-family:'Montserrat',sans-serif;overflow-x:hidden;min-height:100vh;display:flex;justify-content:center;align-items:center;position:relative;padding:40px 20px}
+
+.background-glow{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:80vw;height:80vw;background:radial-gradient(circle,var(--glow) 0%,rgba(10,10,10,0) 70%);z-index:-2;animation:pulseGlow 4s infinite alternate;pointer-events:none}
+@keyframes pulseGlow{0%{transform:translate(-50%,-50%) scale(1);opacity:.8}100%{transform:translate(-50%,-50%) scale(1.2);opacity:1}}
+.particles{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;overflow:hidden;pointer-events:none}
+.particle{position:absolute;background:var(--primary);border-radius:50%;box-shadow:0 0 10px var(--primary);animation:floatUp linear infinite;opacity:0}
+@keyframes floatUp{0%{transform:translateY(100vh) scale(0);opacity:0}20%{opacity:1}80%{opacity:1}100%{transform:translateY(-10vh) scale(1.5);opacity:0}}
+
+.container{text-align:center;z-index:10;max-width:1000px;width:100%;display:flex;flex-direction:column;align-items:center}
+
+/* === ЭКРАН ВХОДА === */
+.gate{position:fixed;inset:0;background:rgba(5,5,5,0.95);backdrop-filter:blur(12px);z-index:5000;display:flex;align-items:center;justify-content:center;padding:20px;transition:opacity .6s ease}
+.gate.hidden{opacity:0;pointer-events:none}
+.gate-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:35px 30px;max-width:420px;width:100%;text-align:center;box-shadow:0 0 60px rgba(var(--primary-rgb),0.15)}
+.gate-title{font-family:'Orbitron',sans-serif;font-size:1rem;color:var(--primary);text-transform:uppercase;letter-spacing:1px;margin-bottom: 20px;}
+
+.captcha-box{display:flex;align-items:center;gap:15px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:left;transition:.3s;cursor:pointer}
+.captcha-box:hover{border-color:rgba(var(--primary-rgb),0.4)}
+.captcha-box.verified{border-color:var(--primary);box-shadow:0 0 20px var(--shadow)}
+.captcha-check{width:30px;height:30px;border:2px solid var(--border);border-radius:6px;position:relative;flex-shrink:0;transition:.3s;background:rgba(0,0,0,0.3)}
+.captcha-spinner{display:none;position:absolute;inset:2px;border:2px solid transparent;border-top-color:var(--primary);border-radius:50%;animation:capSpin .8s linear infinite}
+.captcha-tick{display:none;position:absolute;inset:0;margin:auto;width:16px;height:16px;stroke:var(--primary);stroke-width:3;fill:none;filter:drop-shadow(0 0 5px var(--primary));animation:capPop .3s ease}
+.captcha-box.checking .captcha-spinner{display:block}
+.captcha-box.verified .captcha-tick{display:block}
+.captcha-title{font-weight:700;font-size:.95rem}
+.captcha-status{font-size:.75rem;color:#666;margin-top:2px;}
+.captcha-box.verified .captcha-status{color:var(--primary)}
+@keyframes capSpin{to{transform:rotate(360deg)}}
+@keyframes capPop{0%{transform:scale(0)}70%{transform:scale(1.3)}100%{transform:scale(1)}}
+
+/* === КОНТЕНТ === */
+.typewriter-wrapper{display:flex;flex-direction:column;align-items:center;gap:15px;min-height:120px; margin-bottom: 40px;}
+.typewriter-line{display:inline-block;font-size:clamp(1.2rem,3vw,2.5rem);font-weight:700;white-space:nowrap;overflow:hidden;width:0;border-right:3px solid transparent}
+
+.animate .line-1{color:#fff;animation:typingLine1 2s steps(30,end) forwards, blinkCursor .75s step-end infinite;}
+.animate .line-2{color:var(--primary);text-shadow:0 0 10px var(--shadow);animation:typingLine2 2s steps(30,end) 2s forwards, blinkCursorTheme .75s step-end infinite 2s;}
+.animate .line-3{color:#e0e0e0;font-size:clamp(1rem,2.5vw,1.5rem);animation:typingLine3 2s steps(40,end) 4s forwards; border-right:none;}
+.animate .grid-container{animation:fadeInUp 1s ease-out 5s forwards;}
+.animate .btn{animation:fadeInUp 1s ease-out 5.5s forwards;}
+
+.no-animate .typewriter-line{width:100%;border-right:none}
+.no-animate .line-1{color:#fff}
+.no-animate .line-2{color:var(--primary);text-shadow:0 0 10px var(--shadow)}
+.no-animate .line-3{color:#e0e0e0}
+.no-animate .grid-container{opacity:1}
+.no-animate .btn{opacity:1; transform: translateY(0);}
+
+.btn{display:inline-block;margin-top:20px;padding:14px 38px;font-family:'Orbitron',sans-serif;font-size:1.05rem;font-weight:700;color:var(--primary);text-decoration:none;text-transform:uppercase;letter-spacing:.5px;border:1px solid var(--primary);border-radius:8px;background:transparent;cursor:pointer;transition:.3s;opacity:0;transform:translateY(20px);box-shadow:0 0 10px var(--shadow);}
+.btn:hover{background:var(--primary);color:#000;box-shadow:0 0 25px var(--glow-strong);transform:scale(1.05)}
+
+.grid-container{width:100%;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;opacity:0;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:25px;text-align:left;transition:.3s;display:flex;flex-direction:column}
+.card:hover{border-color:rgba(var(--primary-rgb),0.6);box-shadow:0 0 25px var(--shadow);transform:translateY(-4px)}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.card-title{font-family:'Orbitron',sans-serif;font-size:1.1rem;color:var(--primary);text-transform:uppercase;letter-spacing:1px}
+.card-text{color:#ccc;line-height:1.6;font-size: 0.95rem;}
+.card-badge{font-size:.7rem;padding:4px 10px;border-radius:20px;background:rgba(var(--primary-rgb),0.15);color:var(--primary);font-weight:700}
+
+.reset-btn {
+    position: fixed; bottom: 20px; right: 20px; 
+    background: #222; color: #555; border: 1px solid #333; 
+    padding: 5px 10px; font-size: 0.7rem; cursor: pointer; z-index: 9999;
+}
+.reset-btn:hover { color: #fff; border-color: #fff; }
+
+@keyframes typingLine1{from{width:0;border-right-color:#fff}to{width:100%;border-right-color:#fff}}
+@keyframes typingLine2{from{width:0;border-right-color:var(--primary)}to{width:100%;border-right-color:var(--primary)}}
+@keyframes typingLine3{from{width:0}to{width:100%}}
+@keyframes blinkCursor{from,to{border-right-color:transparent}50%{border-right-color:#fff}}
+@keyframes blinkCursorTheme{from,to{border-right-color:transparent}50%{border-right-color:var(--primary)}}
+@keyframes fadeInUp{0%{opacity:0;transform:translateY(30px)}100%{opacity:1;transform:translateY(0)}}
+
+</style>
+</head>
+<body>
+
+<div class="background-glow"></div>
+<div class="particles" id="particles"></div>
+
+<!-- КНОПКА СБРОСА (ДЛЯ ТЕСТА) -->
+<button class="reset-btn" onclick="resetTest()">↻ Сбросить анимацию</button>
+
+<!-- ЭКРАН ПРОВЕРКИ -->
+<div class="gate" id="gate">
+    <div class="gate-card">
+        <div class="gate-title">⚠️ Внимание</div>
+        <p style="color:#aaa; margin-bottom:20px; font-size:0.9rem;">Ставя галочку вы соглашаетесь с тем что не будете критиковать создателя☻.</p>
+        <div class="captcha-box" id="captchaBox" onclick="runCaptcha()">
+            <div class="captcha-check">
+                <div class="captcha-spinner"></div>
+                <svg class="captcha-tick" viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg>
+            </div>
+            <div>
+                <div class="captcha-title">Я понимаю риски</div>
+                <div class="captcha-status" id="captchaStatus">Нажмите для входа</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ОСНОВНОЙ САЙТ -->
+<div class="container" id="siteContainer">
+    <div class="typewriter-wrapper">
+        <div class="typewriter-line line-1" id="line1">Загрузка данных...</div>
+        <div class="typewriter-line line-2" id="line2"></div>
+        <div class="typewriter-line line-3" id="line3"></div>
+    </div>
+    
+
+    <div class="grid-container">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title"> Безопасность</div>
+                <div class="card-badge">Что? Ничего.</div>
+            </div>
+            <div class="card-text">
+                Отсутствие сквозного шифрования (E2EE) по умолчанию.В MAX нет публичной спецификации сквозного шифрования для обычных чатов
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Спец. службы</div>
+                <div class="card-badge">FBI</div>
+            </div>
+            <div class="card-text">
+                Сбор и передача данных по запросу. В политике конфиденциальности прямо указано, что компания может передавать данные пользователей правоохранительным органам.
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Другие мессенджеры</div>
+                <div class="card-badge">О ты тоже знаешь Telegram?</div>
+            </div>
+            <div class="card-text">
+                Из-за блокировок всем известного Роскомнадзора всех россиян вытеснили в тоже всем нам знакомый мессенджер Max, что бы "Защитить" Россиян.
+            </div>
+        </div>
+    </div>
+</div>
+
+        <div class="card">
+            <div class="card-">
+                <div class="card-title">Защита в сторону мессенджера</div>
+                <div class="card-badge">Max - Его плюсы и как его есть</div>
+            </div>
+            <div class="card-text">
+             Отправка крупных файлов. Можно пересылать файлы до 4 ГБ без сжатия. Это выручает в рабочих чатах: легко скинуть видео в 4K, большой архив с проектом или логи — в других мессенджерах лимиты часто ниже
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        <div class="card">
+            <div class="card-">
+                <div class="card-title">Защита в сторону мессенджера</div>
+                <div class="card-badge">Max - Его плюсы и как его есть</div>
+            </div>
+            <div class="card-text">
+              Стабильность связи в сложных условиях. Это один из самых частых поводов для похвалы. MAX хорошо адаптируется к слабому сигналу: он автоматически подстраивает поток, чтобы звонок не обрывался, даже если вечером вся сеть нагружена.
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="card featured">
+    <div class="card-header">
+        <div class="card-title">Сладость)))</div>
+        <div class="card-badge">№1</div>
+    </div>
+    <div class="card-text">
+        ФСБ признала MAX недостаточно безопасным
+В августе 2025 года выяснилось, что ФСБ предъявила мессенджеру многостраничный список замечаний, из-за которых MAX нельзя подключить к «Госуслугам» (ЕСИА). Среди требований: 
+
+внедрить сертифицированные ФСБ средства криптозащиты нужного класса — их нет;
+создать модель угроз — её нет;
+заключить договоры с лицензиатами ФСТЭК и ФСБ для аттестации — нет и этих лицензий.
+Первый вице-премьер Дмитрий Григоренко прямо выразил опасение, что уязвимости MAX могут привести к утечкам данных и мошенничеству. 
+
+Почему это так болезненно
+Мессенджер подавался как «самый безопасный», «национальный», с хранением данных в России и привязкой к Госуслугам. А получилось, что главное ведомство по безопасности страны сказало: «не соответствует».      </div>
+</div>
+
+    <script>
+const gate = document.getElementById('gate');
+const container = document.getElementById('siteContainer');
+
+// Функция сброса для тестов
+function resetTest() {
+    sessionStorage.removeItem('captchaPassed');
+    location.reload();
+}
+
+function startSite() {
+    // Если мы только что вошли (нет флага visited), запускаем анимацию
+    if (!sessionStorage.getItem('visitedMaxReview')) {
+        container.classList.add('animate');
+        sessionStorage.setItem('visitedMaxReview', 'true');
+    } else {
+        // Если уже были, показываем всё сразу
+        container.classList.add('no-animate');
+    }
+}
+
+function openGate() {
+    gate.classList.add('hidden');
+    setTimeout(() => {
+        gate.style.display = 'none'; // Полностью убираем из DOM
+        startSite();
+    }, 700);
+}
+
+// Проверяем, проходил ли пользователь проверку ранее в этой сессии
+if (sessionStorage.getItem('captchaPassed') === '1') {
+    // Если да, сразу открываем сайт без анимации входа
+    gate.style.display = 'none';
+    startSite();
+}
+
+function runCaptcha() {
+    const box = document.getElementById('captchaBox');
+    // Защита от двойного клика
+    if (box.classList.contains('checking') || box.classList.contains('verified')) return;
+    
+    box.classList.add('checking');
+    document.getElementById('captchaStatus').textContent = 'Проверка системы...';
+    
+    setTimeout(() => {
+        box.classList.remove('checking');
+        box.classList.add('verified');
+        document.getElementById('captchaStatus').textContent = 'Доступ разрешен ✅';
+        
+        // Подготовка текста перед открытием
+        document.getElementById('line1').textContent = "Мессенджер Макс";
+        document.getElementById('line2').textContent = "полный провал";
+        document.getElementById('line3').textContent = "Безопасность: 0/10 | Но так ли это?";
+        
+        // Сохраняем флаг, что проверка пройдена
+        sessionStorage.setItem('captchaPassed', '1');
+        
+        setTimeout(openGate, 800);
+    }, 1200);
+}
+
+// Частицы фона
+const pc = document.getElementById('particles');
+for (let i = 0; i < 40; i++) {
+    const p = document.createElement('div');
+    p.classList.add('particle');
+    const s = Math.random() * 4 + 2;
+    p.style.width = `${s}px`; p.style.height = `${s}px`;
+    p.style.left = `${Math.random() * 100}vw`;
+    p.style.animationDuration = `${Math.random() * 5 + 3}s`;
+    p.style.animationDelay = `${Math.random() * 5}s`;
+    pc.appendChild(p);
+}
+</script>
+<script>
+// Ждем загрузки страницы
+window.addEventListener('load', function() {
+    // Находим все карточки
+    const cards = document.querySelectorAll('.card');
+    
+    // Ищем ту, где есть текст "СЛАДОСТЬ"
+    cards.forEach(card => {
+        const title = card.querySelector('.card-title');
+        if (title && title.textContent.includes('СЛАДОСТЬ')) {
+            // Делаем её большой!
+            card.style.gridColumn = 'span 2';
+            card.style.gridRow = 'span 2';
+            card.style.background = 'linear-gradient(145deg, #1a0505 0%, #111 100%)';
+            card.style.border = '1px solid var(--primary)';
+            card.style.boxShadow = '0 0 30px rgba(255, 0, 51, 0.15)';
+            card.style.padding = '40px';
+            card.style.zIndex = '2';
+            
+            // Увеличиваем заголовок и текст внутри
+            const innerTitle = card.querySelector('.card-title');
+            const innerText = card.querySelector('.card-text');
+            if (innerTitle) innerTitle.style.fontSize = '2rem';
+            if (innerText) {
+                innerText.style.fontSize = '1.1rem';
+                innerText.style.lineHeight = '1.6';
+            }
+            
+            console.log('✅ Большой блок найден и увеличен!');
+        }
+    });
+});
+</body>
+</html>
