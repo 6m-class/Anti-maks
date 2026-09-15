@@ -90,6 +90,51 @@ body{background:var(--bg);color:#fff;font-family:'Montserrat',sans-serif;overflo
 @keyframes blinkCursorTheme{from,to{border-right-color:transparent}50%{border-right-color:var(--primary)}}
 @keyframes fadeInUp{0%{opacity:0;transform:translateY(30px)}100%{opacity:1;transform:translateY(0)}}
 
+    /* === ИСПРАВЛЕНИЕ МАСШТАБИРОВАНИЯ НА ТЕЛЕФОНЕ === */
+
+/* Для всех мобильных устройств (ширина меньше 900px) */
+@media (max-width: 900px) {
+    /* 1. Превращаем жесткую сетку в одну колонку */
+    .grid-container {
+        grid-template-columns: 1fr !important; 
+        gap: 15px;
+    }
+
+    /* 2. Заставляем ВСЕ блоки (включая большой) занимать всю ширину */
+    .card, 
+    .card.big-card {
+        grid-column: 1 / -1 !important;
+        grid-row: auto !important;
+        padding: 20px; /* Чуть уменьшаем отступы для экономии места */
+    }
+
+    /* 3. Адаптируем заголовки и текст, чтобы они не вылезали */
+    .typewriter-line {
+        white-space: normal !important; /* Разрешаем перенос строк */
+        width: 100% !important;
+        border-right: none !important; /* Убираем курсор печати на мобилке, он там глючит */
+    }
+    
+    .card-title {
+        font-size: 1.2rem !important;
+    }
+
+    .card.big-card .card-title {
+        font-size: 1.5rem !important;
+    }
+
+    .card-text {
+        font-size: 0.95rem !important;
+        line-height: 1.5;
+        word-wrap: break-word; /* Если встретится очень длинное слово, оно перенесется */
+    }
+}
+
+/* Глобальная страховка: запрещаем горизонтальную прокрутку всей страницы */
+html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+}
 </style>
 </head>
 <body>
