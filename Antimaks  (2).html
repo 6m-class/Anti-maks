@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title> — Мессенджер Макс</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root { 
+    --primary:#ff0033; 
+    --primary-rgb:255,0,51; 
+    --bg:#0a0a0a; 
+    --card:#111; 
+    --border:rgba(255,255,255,0.08); 
+    --glow:rgba(255,0,51,0.15); 
+    --glow-strong:rgba(255,0,51,0.8); 
+    --shadow:rgba(255,0,51,0.2); 
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:#fff;font-family:'Montserrat',sans-serif;overflow-x:hidden;min-height:100vh;padding:40px 20px}
+
+.background-glow{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:80vw;height:80vw;background:radial-gradient(circle,var(--glow) 0%,rgba(10,10,10,0) 70%);z-index:-2;animation:pulseGlow 4s infinite alternate;pointer-events:none}
+@keyframes pulseGlow{0%{transform:translate(-50%,-50%) scale(1);opacity:.8}100%{transform:translate(-50%,-50%) scale(1.2);opacity:1}}
+
+.container{max-width:900px;margin:0 auto;z-index:10;position:relative}
+
+/* Кнопка назад */
+.back-btn{
+    display:inline-flex;align-items:center;gap:10px;
+    padding:12px 24px;font-family:'Orbitron',sans-serif;font-size:.9rem;
+    color:var(--primary);text-decoration:none;text-transform:uppercase;
+    border:1px solid var(--primary);border-radius:8px;background:transparent;
+    cursor:pointer;transition:.3s;margin-bottom:40px;
+}
+.back-btn:hover{background:var(--primary);color:#000;box-shadow:0 0 25px var(--glow-strong)}
+
+/* Заголовок страницы */
+.page-title{
+    font-family:'Orbitron',sans-serif;font-size:clamp(2rem,5vw,3.5rem);
+    color:var(--primary);text-shadow:0 0 20px var(--shadow);
+    margin-bottom:30px;text-transform:uppercase;
+}
+
+/* Контент */
+.content{
+    background:var(--card);border:1px solid var(--border);
+    border-radius:12px;padding:40px;line-height:1.8;font-size:1.1rem;
+    color:#ccc;box-shadow:0 0 40px rgba(var(--primary-rgb),0.1);
+}
+
+.content p{margin-bottom:20px}
+.content strong{color:var(--primary);font-weight:700}
+
+/* Бейдж */
+.badge{
+    display:inline-block;padding:6px 14px;border-radius:20px;
+    background:rgba(var(--primary-rgb),0.15);color:var(--primary);
+    font-size:.8rem;font-weight:700;margin-bottom:20px;
+}
+
+/* Адаптив */
+@media (max-width:900px) {
+    .content{padding:25px;font-size:1rem}
+    .page-title{font-size:2rem}
+}
+</style>
+</head>
+<body>
+
+<div class="background-glow"></div>
+
+<div class="container">
+    <!-- Кнопка назад -->
+    <a href="index.html" class="back-btn">← Назад к обзору</a>
+
+    <!-- Заголовок -->
+    <h1 class="page-title"></h1>
+    <div class="badge"></div>
+
+    <!-- Полный текст -->
+    <div class="content">
+        MAX зарегистрирован как организатор распространения информации (ОРИ) — это означает, что он обязан создать технический канал для правоохранительных органов и спецслужб, через который те могут получать доступ к переписке. По словам специалистов, передача данных в этом случае происходит в автоматическом режиме.
+    </div>
+</div>
+
+</body>
+</html>
